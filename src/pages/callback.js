@@ -1,16 +1,22 @@
-import React, { useEffect } from "react"
+import React from "react"
 import Layout from "../components/layout"
 import { getTokenCallback } from "../helpers/auth"
 
-const CallbackPage = () => {
-  useEffect(getTokenCallback)
+class CallbackPage extends React.Component {
+  componentDidMount() {
+    getTokenCallback((error, tokens) => {
+      window.location.href = (!error && tokens) ? '/profile' : '/'
+    })
+  }
 
-  return (
-    <Layout>
-      <h1>Loading...</h1>
-      <p>We're validating your authorization code and you will be redirected momentarily.</p>
-    </Layout>
-  )
+  render() {
+    return (
+      <Layout>
+        <h1>Loading...</h1>
+        <p>We're validating your authorization code and you will be redirected momentarily.</p>
+      </Layout>
+    )
+  }
 }
 
 export default CallbackPage
