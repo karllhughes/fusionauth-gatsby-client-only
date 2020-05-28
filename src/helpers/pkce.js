@@ -37,3 +37,8 @@ export const getVerifier = () => {
 export const getChallenge = () => {
   return base64URLEncode(sha256(getVerifier()));
 }
+
+export const isStateValid = (state) => {
+  const pkceState = localStorage.getItem('pkceState')
+  return state.length > 0 && pkceState.length > 0 && state === pkceState
+}

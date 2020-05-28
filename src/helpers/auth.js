@@ -1,4 +1,4 @@
-import { getChallenge, getState, getVerifier } from "../helpers/pkce"
+import { getChallenge, getState, getVerifier, isStateValid } from "../helpers/pkce"
 import queryString from "query-string"
 
 const config = {
@@ -34,7 +34,11 @@ export const isAuthenticated = () => {
 
 export const getTokenCallback = (callback) => {
   const code = queryString.parse(window.location.search).code
+  const state = queryString.parse(window.location.search).state
 
+  if (!isStateValid(state)) {
+    callback(new Error('Invalid state, please try again'))
+  }
   const requestUrl = `${config.baseUrl}/oauth2/token`
   const requestParams = {
     client_id: config.clientId,
@@ -65,10 +69,10 @@ export const getTokenCallback = (callback) => {
 export const getCurrentUser = (callback) => {
   const accessToken = localStorage.getItem('accessToken')
   const userId = localStorage.getItem('userId')
+  const requestUrl = `${config.baseUrl}/api/user/${userId}`
+  const requestOptions = { headers: { 'Authorization': `Bearer ${accessToken}` } }
 
-  fetch(`${config.baseUrl}/api/user/${userId}`, {
-    headers: { 'Authorization': `Bearer ${accessToken}` }
-  })
+  fetch(requestUrl, requestOptions)
     .then(parseJson)
     .then(data => {
       if (data && data.user) {
@@ -78,4 +82,8 @@ export const getCurrentUser = (callback) => {
       }
     })
     .catch((error) => callback(error))
+}
+
+export const generateLogoutUrl = () => {
+  return `${config.baseUrl}/oauth2/logout?client_id=${config.clientId}&tenantId=${config.tenantId}`
 }
