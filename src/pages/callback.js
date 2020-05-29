@@ -5,7 +5,7 @@ import { getTokenCallback } from "../helpers/auth"
 class CallbackPage extends React.Component {
   componentDidMount() {
     getTokenCallback((error, tokens) => {
-      window.location.href = (!error && tokens) ? '/profile' : '/'
+      window.location.href = !error && tokens ? "/profile" : "/"
     })
   }
 
@@ -13,7 +13,10 @@ class CallbackPage extends React.Component {
     return (
       <Layout>
         <h1>Loading...</h1>
-        <p>We're validating your authorization code and you will be redirected momentarily.</p>
+        <p>
+          We're validating your authorization code and you will be redirected
+          momentarily.
+        </p>
       </Layout>
     )
   }

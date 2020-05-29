@@ -1,4 +1,9 @@
-import { getChallenge, getState, getVerifier, isStateValid } from "../helpers/pkce"
+import {
+  getChallenge,
+  getState,
+  getVerifier,
+  isStateValid,
+} from "../helpers/pkce"
 import queryString from "query-string"
 
 const config = {
@@ -8,7 +13,7 @@ const config = {
   redirectUrl: process.env.GATSBY_REDIRECT_URL,
 }
 
-const parseJson = (response) => {
+const parseJson = response => {
   if (response.status === 200) {
     return response.json()
   } else {
@@ -16,9 +21,9 @@ const parseJson = (response) => {
   }
 }
 
-const saveTokenToLocalStorage = (data) => {
-  localStorage.setItem('accessToken', data.access_token)
-  localStorage.setItem('userId', data.userId)
+const saveTokenToLocalStorage = data => {
+  localStorage.setItem("accessToken", data.access_token)
+  localStorage.setItem("userId", data.userId)
 }
 
 export const generateLoginUrl = () => {
@@ -29,29 +34,29 @@ export const generateLoginUrl = () => {
 }
 
 export const isAuthenticated = () => {
-  return localStorage.getItem('accessToken') && localStorage.getItem('userId')
+  return localStorage.getItem("accessToken") && localStorage.getItem("userId")
 }
 
-export const getTokenCallback = (callback) => {
+export const getTokenCallback = callback => {
   const code = queryString.parse(window.location.search).code
   const state = queryString.parse(window.location.search).state
 
   if (!isStateValid(state)) {
-    callback(new Error('Invalid state, please try again'))
+    callback(new Error("Invalid state, please try again"))
   }
   const requestUrl = `${config.baseUrl}/oauth2/token`
   const requestParams = {
     client_id: config.clientId,
     code: code,
     code_verifier: getVerifier(),
-    grant_type: 'authorization_code',
+    grant_type: "authorization_code",
     redirect_uri: config.redirectUrl,
   }
   const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: queryString.stringify(requestParams),
-  };
+  }
 
   fetch(requestUrl, requestOptions)
     .then(parseJson)
@@ -63,14 +68,14 @@ export const getTokenCallback = (callback) => {
         throw data
       }
     })
-    .catch((error) => callback(error, null))
+    .catch(error => callback(error, null))
 }
 
-export const getCurrentUser = (callback) => {
-  const accessToken = localStorage.getItem('accessToken')
-  const userId = localStorage.getItem('userId')
+export const getCurrentUser = callback => {
+  const accessToken = localStorage.getItem("accessToken")
+  const userId = localStorage.getItem("userId")
   const requestUrl = `${config.baseUrl}/api/user/${userId}`
-  const requestOptions = { headers: { 'Authorization': `Bearer ${accessToken}` } }
+  const requestOptions = { headers: { Authorization: `Bearer ${accessToken}` } }
 
   fetch(requestUrl, requestOptions)
     .then(parseJson)
@@ -78,10 +83,10 @@ export const getCurrentUser = (callback) => {
       if (data && data.user) {
         callback(null, data.user)
       } else {
-        throw data;
+        throw data
       }
     })
-    .catch((error) => callback(error))
+    .catch(error => callback(error))
 }
 
 export const generateLogoutUrl = () => {

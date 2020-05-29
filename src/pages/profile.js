@@ -1,6 +1,11 @@
 import React from "react"
 import Layout from "../components/layout"
-import { generateLoginUrl, generateLogoutUrl, getCurrentUser, isAuthenticated } from "../helpers/auth"
+import {
+  generateLoginUrl,
+  generateLogoutUrl,
+  getCurrentUser,
+  isAuthenticated,
+} from "../helpers/auth"
 
 class ProfilePage extends React.Component {
   state = {
@@ -8,15 +13,15 @@ class ProfilePage extends React.Component {
   }
 
   componentDidMount() {
-    isAuthenticated() ?
-      getCurrentUser((error, user) => {
-        if (!error && user) {
-          this.setState({user})
-        } else {
-          window.location.href = generateLoginUrl()
-        }
-      }) :
-      window.location.href = '/'
+    isAuthenticated()
+      ? getCurrentUser((error, user) => {
+          if (!error && user) {
+            this.setState({ user })
+          } else {
+            window.location.href = generateLoginUrl()
+          }
+        })
+      : (window.location.href = "/")
   }
 
   logout() {
@@ -28,7 +33,11 @@ class ProfilePage extends React.Component {
     return (
       <Layout>
         <h1>Profile</h1>
-        {this.state.user ? (<p>You are currently logged in as {this.state.user.email}</p>) : ('') }
+        {this.state.user ? (
+          <p>You are currently logged in as {this.state.user.email}</p>
+        ) : (
+          ""
+        )}
         <p>
           <button onClick={this.logout}>Logout</button>
         </p>
