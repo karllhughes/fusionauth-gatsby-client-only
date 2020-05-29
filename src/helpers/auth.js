@@ -17,9 +17,9 @@ export const generateLoginUrl = () => {
   const queryParams = queryString.stringify({
     client_id: config.clientId,
     code_challenge: getChallenge(),
-    code_challenge_method: 'S256',
+    code_challenge_method: "S256",
     state: getState(),
-    response_type: 'code',
+    response_type: "code",
     tenantId: config.tenantId,
     redirect_uri: config.redirectUrl,
   })
@@ -28,8 +28,7 @@ export const generateLoginUrl = () => {
 }
 
 export const isAuthenticated = () => {
-  return localStorage.getItem("accessToken") &&
-    localStorage.getItem("userId")
+  return localStorage.getItem("accessToken") && localStorage.getItem("userId")
 }
 
 const saveTokenToLocalStorage = data => {
