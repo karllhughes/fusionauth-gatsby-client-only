@@ -13,11 +13,11 @@ function sha256(buffer) {
 }
 
 export const getState = () => {
-  let state = localStorage.getItem('pkceState');
+  let state = localStorage.getItem('clientState');
 
   if (!state) {
     state = base64URLEncode(crypto.randomBytes(32));
-    localStorage.setItem('pkceState', state);
+    localStorage.setItem('clientState', state);
   }
 
   return state
@@ -39,6 +39,6 @@ export const getChallenge = () => {
 }
 
 export const isStateValid = (state) => {
-  const pkceState = localStorage.getItem('pkceState')
-  return state.length > 0 && pkceState.length > 0 && state === pkceState
+  const clientState = getState();
+  return state.length > 0 && clientState.length > 0 && state === clientState
 }
