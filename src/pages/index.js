@@ -1,12 +1,17 @@
 import React from "react"
 import Layout from "../components/layout"
-import LoginLink from "../components/login-link"
+import { generateLoginUrl, isAuthenticated } from "../helpers/auth"
+import { Link } from "gatsby"
 
 const IndexPage = () => (
   <Layout>
     <h1>Home</h1>
     <p>
-      <LoginLink />
+      {isAuthenticated() ? (
+        <Link to={"/profile"}>View your profile</Link>
+      ) : (
+        <a href={generateLoginUrl()}>Login to get started</a>
+      )}
     </p>
   </Layout>
 )

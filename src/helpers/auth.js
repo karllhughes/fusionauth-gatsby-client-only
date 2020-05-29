@@ -13,12 +13,23 @@ const config = {
   redirectUrl: process.env.GATSBY_REDIRECT_URL,
 }
 
-const parseJson = response => {
-  if (response.status === 200) {
-    return response.json()
-  } else {
-    throw response.status
-  }
+export const generateLoginUrl = () => {
+  const queryParams = queryString.stringify({
+    client_id: config.clientId,
+    code_challenge: getChallenge(),
+    code_challenge_method: 'S256',
+    state: getState(),
+    response_type: 'code',
+    tenantId: config.tenantId,
+    redirect_uri: config.redirectUrl,
+  })
+
+  return `${config.baseUrl}/oauth2/authorize?${queryParams}`
+}
+
+export const isAuthenticated = () => {
+  return localStorage.getItem("accessToken") &&
+    localStorage.getItem("userId")
 }
 
 const saveTokenToLocalStorage = data => {
@@ -26,15 +37,12 @@ const saveTokenToLocalStorage = data => {
   localStorage.setItem("userId", data.userId)
 }
 
-export const generateLoginUrl = () => {
-  const challenge = getChallenge()
-  const state = getState()
-
-  return `${config.baseUrl}/oauth2/authorize?client_id=${config.clientId}&code_challenge=${challenge}&state=${state}&code_challenge_method=S256&response_type=code&tenantId=${config.tenantId}&redirect_uri=${config.redirectUrl}`
-}
-
-export const isAuthenticated = () => {
-  return localStorage.getItem("accessToken") && localStorage.getItem("userId")
+const parseJson = response => {
+  if (response.status === 200) {
+    return response.json()
+  } else {
+    throw response.status
+  }
 }
 
 export const getTokenCallback = callback => {
